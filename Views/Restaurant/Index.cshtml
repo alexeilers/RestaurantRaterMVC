@@ -1,7 +1,7 @@
 @model IEnumerable<RestaurantRaterMVC.Models.Restaurant.RestaurantListItem>
 
 @{
-    ViewData["Title"] = "Restaurant Index";
+    ViewData["Title"] = "Restaurant";
 }
 
 <h1>Restaurant Index</h1>
@@ -27,7 +27,14 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Score)
+                    @if (item.Score > 0)
+                    {
+                        @Html.DisplayFor(modelItem => item.Score)
+                    }
+                    else
+                    {
+                        <span>No Ratings yet</span>
+                    }
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", "Restaurant", new { id = item.Id}) |
@@ -35,14 +42,6 @@
                     @Html.ActionLink("Delete", "Delete", "Restaurant", new { id = item.Id}) 
                 </td>
             </tr>
-            @if (item.Score > 0)
-            {
-                @Html.DisplayFor(modelItem => item.Score)
-            }
-            else
-            {
-                <span>No Ratings yet</span>
-            }
         }  
     </tbody>
 </table>
