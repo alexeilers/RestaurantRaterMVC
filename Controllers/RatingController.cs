@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RestaurantRaterMVC.Data;
 using RestaurantRaterMVC.Models.Rating;
+using RestaurantRaterMVC.Models.Restaurant;
 
 namespace RestaurantRaterMVC.Controllers
 {
@@ -24,6 +25,7 @@ namespace RestaurantRaterMVC.Controllers
             IEnumerable<RatingListItem> ratings = await _context.Ratings
                 .Select(r => new RatingListItem()
                 {
+                    Id = r.Id,
                     RestaurantName = r.Restaurant.Name,
                     Score = r.Score,
                 }).ToListAsync();
@@ -76,6 +78,36 @@ namespace RestaurantRaterMVC.Controllers
             };
 
             _context.Ratings.Add(rating);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            Rating rating = await _context.Ratings.FindAsync(id);
+
+            if (rating == null)
+                return RedirectToAction(nameof(Index));
+
+            RatingListItem ratingListItem = new RatingListItem ()
+            {
+                Id = rating.Id,
+                Score = rating.Score,
+            };
+
+            return View(ratingListItem);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, RatingListItem model)
+        {
+            Rating rating = await _context.Ratings.FindAsync(model.Id);
+            
+            if (rating == null)
+                return RedirectToAction(nameof(Index));
+
+            _context.Ratings.Remove(rating);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
